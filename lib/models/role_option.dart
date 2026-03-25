@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class RoleOption {
   final String role;
-  final IconData icon;
+  final String icon;
   final String description;
   final Color color;
 

@@ -1,5 +1,3 @@
-
-// ==================== CORPORATE SIGNUP SCREEN ====================
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -14,44 +12,49 @@ class _CorporateSignupScreenState extends State<CorporateSignupScreen> {
   final _formKey = GlobalKey<FormState>();
   int _currentStep = 0;
 
-  // Step 1: Corporate Details
+  // ── Brand Colors (matching all screens) ───────────────────────────────────
+  static const Color _purple = Color(0xFF8B5CF6);
+  static const Color _blue = Color(0xFF3B82F6);
+  static const Color _bgColor = Color(0xFFF8F8FF);
+  static const Color _textDark = Color(0xFF0F172A);
+  static const Color _textMid = Color(0xFF6B7280);
+  static const Color _textLight = Color(0xFFB0B8C1);
+
+  // ── Step 1 Controllers ─────────────────────────────────────────────────────
   final _companyNameController = TextEditingController();
   final _industryTypeController = TextEditingController();
   final _employeeCountController = TextEditingController();
   String? _companySize;
   final _locationController = TextEditingController();
   final _branchesController = TextEditingController();
-
-  // Point of Contact
+  final _registrationNumberController = TextEditingController();
   final _pocNameController = TextEditingController();
   final _pocDesignationController = TextEditingController();
   final _pocEmailController = TextEditingController();
   final _pocMobileController = TextEditingController();
-  final _registrationNumberController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
 
-  // Step 2: Interest Areas
+  // ── Step 2 Controllers ─────────────────────────────────────────────────────
   final List<String> _selectedInterests = [];
   final List<String> _selectedServices = [];
   final _goalsObjectivesController = TextEditingController();
   final _currentChallengesController = TextEditingController();
   bool _isLargeAudience = false;
 
-  // Step 3: Service Preferences
+  // ── Step 3 Controllers ─────────────────────────────────────────────────────
   String? _preferredMode;
   final _expectedTimelineController = TextEditingController();
   final _indicativeBudgetController = TextEditingController();
   final _experienceDetailsController = TextEditingController();
   final _kpiController = TextEditingController();
 
-  // Step 4: Final Details
+  // ── Step 4 Controllers ─────────────────────────────────────────────────────
   final _approvalAuthorityController = TextEditingController();
   final _approvalRoleController = TextEditingController();
   final _approvalProcessController = TextEditingController();
 
-  // Auth
-  final _passwordController = TextEditingController();
-  bool _obscurePassword = true;
-
+  // ── Options ────────────────────────────────────────────────────────────────
   final List<String> _interestAreas = [
     'PHIR School',
     'PHIR Shiksha',
@@ -67,16 +70,24 @@ class _CorporateSignupScreenState extends State<CorporateSignupScreen> {
     'Financial Advisory',
     'Insurance',
     'Tax Planning',
+    'Investment',
   ];
 
   final List<String> _companySizes = [
-    'Small (1-50 employees)',
-    'Medium (51-250 employees)',
-    'Large (251-1000 employees)',
-    'Enterprise (1000+ employees)',
+    'Small (1–50)',
+    'Medium (51–250)',
+    'Large (251–1000)',
+    'Enterprise (1000+)',
   ];
 
   final List<String> _preferredModes = ['Onsite', 'Online', 'Hybrid'];
+
+  final List<Map<String, dynamic>> _steps = [
+    {'label': 'Corporate', 'icon': Icons.business_outlined},
+    {'label': 'Interests', 'icon': Icons.interests_outlined},
+    {'label': 'Preferences', 'icon': Icons.tune_rounded},
+    {'label': 'Verify', 'icon': Icons.verified_outlined},
+  ];
 
   @override
   void dispose() {
@@ -85,11 +96,12 @@ class _CorporateSignupScreenState extends State<CorporateSignupScreen> {
     _employeeCountController.dispose();
     _locationController.dispose();
     _branchesController.dispose();
+    _registrationNumberController.dispose();
     _pocNameController.dispose();
     _pocDesignationController.dispose();
     _pocEmailController.dispose();
     _pocMobileController.dispose();
-    _registrationNumberController.dispose();
+    _passwordController.dispose();
     _goalsObjectivesController.dispose();
     _currentChallengesController.dispose();
     _expectedTimelineController.dispose();
@@ -99,265 +111,767 @@ class _CorporateSignupScreenState extends State<CorporateSignupScreen> {
     _approvalAuthorityController.dispose();
     _approvalRoleController.dispose();
     _approvalProcessController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
+  // ── Field Decoration (matching login screen style) ─────────────────────────
+  InputDecoration _dec({
+    required String hint,
+    required IconData icon,
+    String? prefix,
+    Widget? suffix,
+    bool alignLabelWithHint = false,
+  }) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: const TextStyle(
+        color: _textLight,
+        fontSize: 15,
+        fontWeight: FontWeight.w400,
+      ),
+      prefixText: prefix,
+      prefixStyle: const TextStyle(
+        color: _textMid,
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+      ),
+      prefixIcon: Icon(icon, color: _textLight, size: 22),
+      suffixIcon: suffix,
+      filled: true,
+      fillColor: Colors.white,
+      alignLabelWithHint: alignLabelWithHint,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: Color(0xFFE5E7EB), width: 1),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: Color(0xFFE5E7EB), width: 1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: _purple, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1.5),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1.5),
+      ),
+      contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+    );
+  }
+
+  TextStyle get _inputStyle => const TextStyle(
+    fontSize: 15,
+    color: _textDark,
+    fontWeight: FontWeight.w500,
+  );
+
+  // ── Navigation ─────────────────────────────────────────────────────────────
+  void _next() {
+    if (_currentStep < 3) {
+      setState(() => _currentStep++);
+    } else {
+      if (_formKey.currentState!.validate()) {
+        Navigator.pushReplacementNamed(context, '/main');
+      }
+    }
+  }
+
+  void _back() {
+    if (_currentStep > 0) setState(() => _currentStep--);
+  }
+
+  // ── Build ──────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: _bgColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF27AE60),
-        foregroundColor: Colors.white,
-        title: const Text('Corporate Registration'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+        backgroundColor: _bgColor,
+        scrolledUnderElevation: 0,
+        elevation: 0,
+        leading: Container(
+          margin: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFE5E7EB)),
+          ),
+          child: IconButton(
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: _purple,
+              size: 18,
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
         ),
+        title: const Text(
+          'Corporate Registration',
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w700,
+            color: _textDark,
+          ),
+        ),
+        centerTitle: true,
       ),
-      body: Form(
-        key: _formKey,
-        child: Stepper(
-          currentStep: _currentStep,
-          onStepContinue: () {
-            if (_currentStep < 3) {
-              setState(() {
-                _currentStep += 1;
-              });
-            } else {
-              if (_formKey.currentState!.validate()) {
-                Navigator.pushReplacementNamed(context, '/main');
-              }
-            }
-          },
-          onStepCancel: () {
-            if (_currentStep > 0) {
-              setState(() {
-                _currentStep -= 1;
-              });
-            }
-          },
-          controlsBuilder: (context, details) {
-            return Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: Row(
-                children: [
-                  if (details.currentStep > 0)
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: details.onStepCancel,
-                        child: const Text('Back'),
+      body: SafeArea(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              _buildStepIndicator(),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    transitionBuilder: (child, anim) => FadeTransition(
+                      opacity: anim,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0.05, 0),
+                          end: Offset.zero,
+                        ).animate(anim),
+                        child: child,
                       ),
                     ),
-                  if (details.currentStep > 0) const SizedBox(width: 12),
-                  Expanded(
-                    flex: 2,
-                    child: ElevatedButton(
-                      onPressed: details.onStepContinue,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF27AE60),
-                      ),
-                      child: Text(
-                        details.currentStep == 3 ? 'Submit' : 'Continue',
-                      ),
+                    child: KeyedSubtree(
+                      key: ValueKey(_currentStep),
+                      child: _buildCurrentStep(),
                     ),
                   ),
-                ],
+                ),
               ),
-            );
-          },
-          steps: [
-            Step(
-              title: const Text('Corporate Details'),
-              isActive: _currentStep >= 0,
-              state: _currentStep > 0 ? StepState.complete : StepState.indexed,
-              content: _buildCorporateDetailsStep(),
-            ),
-            Step(
-              title: const Text('Interest Areas'),
-              isActive: _currentStep >= 1,
-              state: _currentStep > 1 ? StepState.complete : StepState.indexed,
-              content: _buildInterestAreasStep(),
-            ),
-            Step(
-              title: const Text('Service Preferences'),
-              isActive: _currentStep >= 2,
-              state: _currentStep > 2 ? StepState.complete : StepState.indexed,
-              content: _buildServicePreferencesStep(),
-            ),
-            Step(
-              title: const Text('Final Details'),
-              isActive: _currentStep >= 3,
-              state: _currentStep > 3 ? StepState.complete : StepState.indexed,
-              content: _buildFinalDetailsStep(),
-            ),
-          ],
+              _buildBottomNav(),
+            ],
+          ),
         ),
       ),
     );
   }
 
+  // ── Step Indicator ─────────────────────────────────────────────────────────
+  Widget _buildStepIndicator() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+      decoration: const BoxDecoration(
+        color: _bgColor,
+        border: Border(bottom: BorderSide(color: Color(0xFFE5E7EB), width: 1)),
+      ),
+      child: Row(
+        children: List.generate(_steps.length * 2 - 1, (i) {
+          if (i.isOdd) {
+            final isDone = _currentStep > i ~/ 2;
+            return Expanded(
+              child: Container(
+                height: 2,
+                decoration: BoxDecoration(
+                  gradient: isDone
+                      ? const LinearGradient(colors: [_purple, _blue])
+                      : null,
+                  color: isDone ? null : const Color(0xFFE5E7EB),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            );
+          }
+          final idx = i ~/ 2;
+          final isDone = _currentStep > idx;
+          final isActive = _currentStep == idx;
+          return Column(
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  gradient: isDone
+                      ? const LinearGradient(
+                          colors: [_purple, _blue],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        )
+                      : null,
+                  color: isDone
+                      ? null
+                      : isActive
+                      ? _purple.withOpacity(0.1)
+                      : Colors.white,
+                  shape: BoxShape.circle,
+                  border: isActive
+                      ? Border.all(color: _purple, width: 2)
+                      : !isDone
+                      ? Border.all(color: const Color(0xFFE5E7EB), width: 1)
+                      : null,
+                  boxShadow: isDone || isActive
+                      ? [
+                          BoxShadow(
+                            color: _purple.withOpacity(0.2),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ]
+                      : [],
+                ),
+                child: Center(
+                  child: isDone
+                      ? const Icon(
+                          Icons.check_rounded,
+                          color: Colors.white,
+                          size: 18,
+                        )
+                      : Icon(
+                          _steps[idx]['icon'] as IconData,
+                          color: isActive ? _purple : _textLight,
+                          size: 18,
+                        ),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                _steps[idx]['label'] as String,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: isActive || isDone
+                      ? FontWeight.w700
+                      : FontWeight.w400,
+                  color: isActive || isDone ? _purple : _textLight,
+                ),
+              ),
+            ],
+          );
+        }),
+      ),
+    );
+  }
+
+  // ── Bottom Nav ─────────────────────────────────────────────────────────────
+  Widget _buildBottomNav() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+      decoration: const BoxDecoration(
+        color: _bgColor,
+        border: Border(top: BorderSide(color: Color(0xFFE5E7EB), width: 1)),
+      ),
+      child: Row(
+        children: [
+          if (_currentStep > 0) ...[
+            Expanded(
+              child: SizedBox(
+                height: 52,
+                child: OutlinedButton(
+                  onPressed: _back,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: _purple,
+                    side: const BorderSide(color: _purple, width: 1.5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.arrow_back_ios_rounded, size: 14),
+                      SizedBox(width: 4),
+                      Text(
+                        'Back',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+          ],
+          Expanded(
+            flex: 2,
+            child: Container(
+              height: 52,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [_purple, _blue],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: _purple.withOpacity(0.35),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(14),
+                  onTap: _next,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _currentStep == 3 ? 'Submit' : 'Continue',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Icon(
+                        _currentStep == 3
+                            ? Icons.check_circle_outline_rounded
+                            : Icons.arrow_forward_ios_rounded,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  Widget _sectionLabel(String label) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          Container(
+            width: 4,
+            height: 18,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [_purple, _blue],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: _purple,
+              letterSpacing: 0.3,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _stepHeader(String title, String subtitle, IconData icon) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
+        boxShadow: [
+          BoxShadow(
+            color: _purple.withOpacity(0.06),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [_purple, _blue],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: _purple.withOpacity(0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Icon(icon, color: Colors.white, size: 26),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: _textDark,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  subtitle,
+                  style: const TextStyle(fontSize: 12.5, color: _textMid),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _toggleCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+    Color activeColor = _purple,
+  }) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      decoration: BoxDecoration(
+        color: value ? activeColor.withOpacity(0.07) : Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: value ? activeColor.withOpacity(0.3) : const Color(0xFFE5E7EB),
+          width: 1.5,
+        ),
+      ),
+      child: SwitchListTile(
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: _textDark,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: const TextStyle(fontSize: 12, color: _textMid),
+        ),
+        value: value,
+        onChanged: onChanged,
+        activeColor: activeColor,
+        secondary: Icon(
+          icon,
+          color: value ? activeColor : _textLight,
+          size: 22,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      ),
+    );
+  }
+
+  Widget _chipGroup(String label, List<String> options, List<String> selected) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _sectionLabel(label),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: options.map((item) {
+            final isSelected = selected.contains(item);
+            return GestureDetector(
+              onTap: () => setState(() {
+                isSelected ? selected.remove(item) : selected.add(item);
+              }),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 9,
+                ),
+                decoration: BoxDecoration(
+                  gradient: isSelected
+                      ? const LinearGradient(
+                          colors: [_purple, _blue],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        )
+                      : null,
+                  color: isSelected ? null : Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                    color: isSelected
+                        ? Colors.transparent
+                        : const Color(0xFFE5E7EB),
+                    width: 1,
+                  ),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: _purple.withOpacity(0.25),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ]
+                      : [],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isSelected) ...[
+                      const Icon(
+                        Icons.check_rounded,
+                        color: Colors.white,
+                        size: 13,
+                      ),
+                      const SizedBox(width: 4),
+                    ],
+                    Text(
+                      item,
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                        color: isSelected ? Colors.white : _textMid,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCurrentStep() {
+    switch (_currentStep) {
+      case 0:
+        return _buildCorporateDetailsStep();
+      case 1:
+        return _buildInterestAreasStep();
+      case 2:
+        return _buildServicePreferencesStep();
+      case 3:
+        return _buildFinalDetailsStep();
+      default:
+        return const SizedBox();
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // STEP 1 — Corporate Details
+  // ══════════════════════════════════════════════════════════════════════════
   Widget _buildCorporateDetailsStep() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Company Information',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
+        // _stepHeader('Corporate Details', 'Tell us about your organization',
+        //     Icons.business_outlined),
+        const SizedBox(height: 12),
+        _sectionLabel('Company Information'),
         TextFormField(
           controller: _companyNameController,
-          decoration: const InputDecoration(
-            labelText: 'Company Name *',
-            prefixIcon: Icon(Icons.business),
-          ),
-          validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+          style: _inputStyle,
+          textCapitalization: TextCapitalization.words,
+          decoration: _dec(hint: 'Company Name', icon: Icons.domain_rounded),
+          validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         TextFormField(
           controller: _industryTypeController,
-          decoration: const InputDecoration(
-            labelText: 'Industry Type *',
-            prefixIcon: Icon(Icons.category),
-          ),
-          validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+          style: _inputStyle,
+          decoration: _dec(hint: 'Industry Type', icon: Icons.factory_outlined),
+          validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         DropdownButtonFormField<String>(
           value: _companySize,
-          decoration: const InputDecoration(
-            labelText: 'Company Size *',
-            prefixIcon: Icon(Icons.people),
+          style: _inputStyle,
+          dropdownColor: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          decoration: _dec(
+            hint: 'Company Size',
+            icon: Icons.people_outline_rounded,
           ),
-          items: _companySizes.map((size) {
-            return DropdownMenuItem(value: size, child: Text(size));
-          }).toList(),
-          onChanged: (value) {
-            setState(() {
-              _companySize = value;
-            });
-          },
-          validator: (value) => value == null ? 'Required' : null,
+          items: _companySizes
+              .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+              .toList(),
+          onChanged: (v) => setState(() => _companySize = v),
+          validator: (v) => v == null ? 'Required' : null,
         ),
-        const SizedBox(height: 16),
-        TextFormField(
-          controller: _employeeCountController,
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Number of Employees *',
-            prefixIcon: Icon(Icons.group),
-          ),
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _employeeCountController,
+                keyboardType: TextInputType.number,
+                style: _inputStyle,
+                decoration: _dec(
+                  hint: 'Employees',
+                  icon: Icons.groups_outlined,
+                ),
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: TextFormField(
+                controller: _branchesController,
+                keyboardType: TextInputType.number,
+                style: _inputStyle,
+                decoration: _dec(hint: 'Branches', icon: Icons.store_outlined),
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         TextFormField(
           controller: _locationController,
-          decoration: const InputDecoration(
-            labelText: 'Location *',
-            prefixIcon: Icon(Icons.location_on),
+          style: _inputStyle,
+          decoration: _dec(
+            hint: 'Headquarters Location',
+            icon: Icons.location_on_outlined,
           ),
-          validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+          validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
         ),
-        const SizedBox(height: 16),
-        TextFormField(
-          controller: _branchesController,
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Number of Branches',
-            prefixIcon: Icon(Icons.store),
-          ),
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-        ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         TextFormField(
           controller: _registrationNumberController,
-          decoration: const InputDecoration(
-            labelText: 'Corporate Registration Number *',
-            prefixIcon: Icon(Icons.badge),
+          style: _inputStyle,
+          decoration: _dec(
+            hint: 'Corporate Registration Number',
+            icon: Icons.numbers_rounded,
           ),
-          validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+          validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
         ),
-        const SizedBox(height: 24),
-        const Text(
-          'Point of Contact',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
+
+        const SizedBox(height: 20),
+        _sectionLabel('Point of Contact'),
         TextFormField(
           controller: _pocNameController,
-          decoration: const InputDecoration(
-            labelText: 'Contact Person Name *',
-            prefixIcon: Icon(Icons.person),
+          style: _inputStyle,
+          textCapitalization: TextCapitalization.words,
+          decoration: _dec(
+            hint: 'Contact Person Name',
+            icon: Icons.badge_outlined,
           ),
-          validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+          validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         TextFormField(
           controller: _pocDesignationController,
-          decoration: const InputDecoration(
-            labelText: 'Designation *',
-            prefixIcon: Icon(Icons.work),
+          style: _inputStyle,
+          decoration: _dec(
+            hint: 'Designation',
+            icon: Icons.work_outline_rounded,
           ),
-          validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+          validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         TextFormField(
           controller: _pocEmailController,
           keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(
-            labelText: 'Official Email *',
-            prefixIcon: Icon(Icons.email),
+          style: _inputStyle,
+          decoration: _dec(
+            hint: 'Official Email',
+            icon: Icons.alternate_email_rounded,
           ),
-          validator: (value) {
-            if (value?.isEmpty ?? true) return 'Required';
-            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value!)) {
+          validator: (v) {
+            if (v?.isEmpty ?? true) return 'Required';
+            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(v!)) {
               return 'Invalid email';
             }
             return null;
           },
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         TextFormField(
           controller: _pocMobileController,
           keyboardType: TextInputType.phone,
-          decoration: const InputDecoration(
-            labelText: 'Mobile Number *',
-            prefixIcon: Icon(Icons.phone),
-            prefixText: '+91 ',
-          ),
+          style: _inputStyle,
+          decoration:
+              _dec(
+                hint: 'Mobile Number',
+                icon: Icons.phone_iphone_rounded,
+              ).copyWith(
+                prefixIcon: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(width: 14),
+                    const Icon(
+                      Icons.phone_iphone_rounded,
+                      color: Color(0xFFB0B8C1),
+                      size: 22,
+                    ),
+                    const SizedBox(width: 8),
+                    const Text(
+                      '+91',
+                      style: TextStyle(
+                        color: Color(0xFF6B7280),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Container(width: 1, height: 20, color: Color(0xFFE5E7EB)),
+                    const SizedBox(width: 10),
+                  ],
+                ),
+              ),
           inputFormatters: [
             FilteringTextInputFormatter.digitsOnly,
             LengthLimitingTextInputFormatter(10),
           ],
-          validator: (value) {
-            if (value?.isEmpty ?? true) return 'Required';
-            if (value!.length != 10) return 'Invalid number';
+          validator: (v) {
+            if (v?.isEmpty ?? true) return 'Required';
+            if (v!.length != 10) return 'Enter valid 10-digit number';
             return null;
           },
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         TextFormField(
           controller: _passwordController,
           obscureText: _obscurePassword,
-          decoration: InputDecoration(
-            labelText: 'Password *',
-            prefixIcon: const Icon(Icons.lock),
-            suffixIcon: IconButton(
+          style: _inputStyle,
+          decoration: _dec(
+            hint: 'Password',
+            icon: Icons.lock_outline_rounded,
+            suffix: IconButton(
               icon: Icon(
-                _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                _obscurePassword
+                    ? Icons.visibility_outlined
+                    : Icons.visibility_off_outlined,
+                color: _textLight,
+                size: 20,
               ),
-              onPressed: () {
-                setState(() {
-                  _obscurePassword = !_obscurePassword;
-                });
-              },
+              onPressed: () =>
+                  setState(() => _obscurePassword = !_obscurePassword),
             ),
           ),
-          validator: (value) {
-            if (value?.isEmpty ?? true) return 'Required';
-            if (value!.length < 8) return 'At least 8 characters';
+          validator: (v) {
+            if (v?.isEmpty ?? true) return 'Required';
+            if (v!.length < 8) return 'At least 8 characters';
             return null;
           },
         ),
@@ -365,244 +879,297 @@ class _CorporateSignupScreenState extends State<CorporateSignupScreen> {
     );
   }
 
+  // ══════════════════════════════════════════════════════════════════════════
+  // STEP 2 — Interest Areas
+  // ══════════════════════════════════════════════════════════════════════════
   Widget _buildInterestAreasStep() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Interest Areas *',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        ),
+        // _stepHeader(
+        //   'Interest Areas',
+        //   'What services are you looking for?',
+        //   Icons.interests_outlined,
+        // ),
         const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: _interestAreas.map((area) {
-            final isSelected = _selectedInterests.contains(area);
-            return FilterChip(
-              label: Text(area, style: const TextStyle(fontSize: 12)),
-              selected: isSelected,
-              onSelected: (selected) {
-                setState(() {
-                  if (selected) {
-                    _selectedInterests.add(area);
-                  } else {
-                    _selectedInterests.remove(area);
-                  }
-                });
-              },
-              selectedColor: const Color(0xFF27AE60).withOpacity(0.3),
-              checkmarkColor: const Color(0xFF27AE60),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 24),
-        const Text(
-          'Services Required *',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: _serviceOptions.map((service) {
-            final isSelected = _selectedServices.contains(service);
-            return FilterChip(
-              label: Text(service),
-              selected: isSelected,
-              onSelected: (selected) {
-                setState(() {
-                  if (selected) {
-                    _selectedServices.add(service);
-                  } else {
-                    _selectedServices.remove(service);
-                  }
-                });
-              },
-              selectedColor: const Color(0xFF27AE60).withOpacity(0.3),
-              checkmarkColor: const Color(0xFF27AE60),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 24),
+
+        _chipGroup('PHIR Interest Areas', _interestAreas, _selectedInterests),
+        const SizedBox(height: 20),
+        _chipGroup('Services Required', _serviceOptions, _selectedServices),
+
+        const SizedBox(height: 20),
+        _sectionLabel('Goals & Challenges'),
         TextFormField(
           controller: _goalsObjectivesController,
           maxLines: 3,
-          decoration: const InputDecoration(
-            labelText: 'Goals & Objectives *',
-            prefixIcon: Icon(Icons.flag),
-            hintText: 'What do you want to achieve?',
+          style: _inputStyle,
+          decoration: _dec(
+            hint: 'What do you want to achieve?',
+            icon: Icons.flag_outlined,
           ),
-          validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+          validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         TextFormField(
           controller: _currentChallengesController,
           maxLines: 3,
-          decoration: const InputDecoration(
-            labelText: 'Current Challenges',
-            prefixIcon: Icon(Icons.warning),
-            hintText: 'What challenges are you facing?',
+          style: _inputStyle,
+          decoration: _dec(
+            hint: 'What challenges are you facing?',
+            icon: Icons.report_problem_outlined,
           ),
         ),
         const SizedBox(height: 16),
-        SwitchListTile(
-          title: const Text('Large Audience/Influencer'),
-          subtitle: const Text(
-            'Do you have a large employee base or influence?',
-          ),
+        _toggleCard(
+          title: 'Large Audience / Influencer',
+          subtitle: 'We have a large employee base or industry influence',
+          icon: Icons.campaign_outlined,
           value: _isLargeAudience,
-          onChanged: (value) {
-            setState(() {
-              _isLargeAudience = value;
-            });
-          },
-          activeColor: const Color(0xFF27AE60),
+          onChanged: (v) => setState(() => _isLargeAudience = v),
         ),
       ],
     );
   }
 
+  // ══════════════════════════════════════════════════════════════════════════
+  // STEP 3 — Service Preferences
+  // ══════════════════════════════════════════════════════════════════════════
   Widget _buildServicePreferencesStep() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // _stepHeader(
+        //   'Service Preferences',
+        //   'How do you want to engage with us?',
+        //   Icons.tune_rounded,
+        // ),
+        const SizedBox(height: 12),
+
+        _sectionLabel('Delivery Preferences'),
         DropdownButtonFormField<String>(
           value: _preferredMode,
-          decoration: const InputDecoration(
-            labelText: 'Preferred Mode *',
-            prefixIcon: Icon(Icons.settings),
+          style: _inputStyle,
+          dropdownColor: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          decoration: _dec(
+            hint: 'Preferred Mode',
+            icon: Icons.devices_outlined,
           ),
-          items: _preferredModes.map((mode) {
-            return DropdownMenuItem(value: mode, child: Text(mode));
-          }).toList(),
-          onChanged: (value) {
-            setState(() {
-              _preferredMode = value;
-            });
-          },
-          validator: (value) => value == null ? 'Required' : null,
+          items: _preferredModes
+              .map((m) => DropdownMenuItem(value: m, child: Text(m)))
+              .toList(),
+          onChanged: (v) => setState(() => _preferredMode = v),
+          validator: (v) => v == null ? 'Required' : null,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         TextFormField(
           controller: _expectedTimelineController,
-          decoration: const InputDecoration(
-            labelText: 'Expected Timeline *',
-            prefixIcon: Icon(Icons.calendar_today),
-            hintText: 'e.g., 3 months, Q2 2026',
+          style: _inputStyle,
+          decoration: _dec(
+            hint: 'e.g., 3 months, Q2 2026',
+            icon: Icons.calendar_month_outlined,
           ),
-          validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+          validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         TextFormField(
           controller: _indicativeBudgetController,
           keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'Indicative Budget (₹)',
-            prefixIcon: Icon(Icons.currency_rupee),
+          style: _inputStyle,
+          decoration: _dec(
+            hint: 'Indicative Budget (₹)',
+            icon: Icons.currency_rupee_rounded,
           ),
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         ),
-        const SizedBox(height: 16),
+
+        const SizedBox(height: 20),
+        _sectionLabel('Experience & Metrics'),
         TextFormField(
           controller: _experienceDetailsController,
           maxLines: 3,
-          decoration: const InputDecoration(
-            labelText: 'Experience Details',
-            prefixIcon: Icon(Icons.history_edu),
-            hintText: 'Previous experience with similar services',
+          style: _inputStyle,
+          decoration: _dec(
+            hint: 'Describe any previous experience...',
+            icon: Icons.history_edu_outlined,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         TextFormField(
           controller: _kpiController,
           maxLines: 3,
-          decoration: const InputDecoration(
-            labelText: 'Key Success Metrics (KPIs) *',
-            prefixIcon: Icon(Icons.analytics),
-            hintText: 'How will you measure success?',
+          style: _inputStyle,
+          decoration: _dec(
+            hint: 'How will you measure success?',
+            icon: Icons.analytics_outlined,
           ),
-          validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+          validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
         ),
       ],
     );
   }
 
+  // ══════════════════════════════════════════════════════════════════════════
+  // STEP 4 — Final Details
+  // ══════════════════════════════════════════════════════════════════════════
   Widget _buildFinalDetailsStep() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Decision Making',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
+        // _stepHeader(
+        //   'Final Details',
+        //   'Decision-making & approval process',
+        //   Icons.verified_outlined,
+        // ),
+        const SizedBox(height: 12),
+
+        _sectionLabel('Approval Authority'),
         TextFormField(
           controller: _approvalAuthorityController,
-          decoration: const InputDecoration(
-            labelText: 'Approval Authority Name *',
-            prefixIcon: Icon(Icons.verified_user),
+          style: _inputStyle,
+          textCapitalization: TextCapitalization.words,
+          decoration: _dec(
+            hint: 'Authority Name',
+            icon: Icons.manage_accounts_outlined,
           ),
-          validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+          validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         TextFormField(
           controller: _approvalRoleController,
-          decoration: const InputDecoration(
-            labelText: 'Approval Authority Role *',
-            prefixIcon: Icon(Icons.work),
+          style: _inputStyle,
+          decoration: _dec(
+            hint: 'Authority Role / Designation',
+            icon: Icons.work_outline_rounded,
           ),
-          validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+          validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         TextFormField(
           controller: _approvalProcessController,
           maxLines: 3,
-          decoration: const InputDecoration(
-            labelText: 'Approval Process *',
-            prefixIcon: Icon(Icons.account_tree),
-            hintText: 'Describe your internal approval process',
+          style: _inputStyle,
+          decoration: _dec(
+            hint: 'Describe your internal approval workflow...',
+            icon: Icons.account_tree_outlined,
           ),
-          validator: (value) => value?.isEmpty ?? true ? 'Required' : null,
+          validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
         ),
+
         const SizedBox(height: 24),
+
+        // ── What Happens Next card ──────────────────────────────────────────
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: const Color(0xFF27AE60).withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFF27AE60).withOpacity(0.3)),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: const Color(0xFFE5E7EB)),
+            boxShadow: [
+              BoxShadow(
+                color: _purple.withOpacity(0.06),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                children: const [
-                  Icon(Icons.info, color: Color(0xFF27AE60)),
-                  SizedBox(width: 8),
-                  Text(
-                    'Next Steps',
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [_purple, _blue],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.rocket_launch_outlined,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'What Happens Next?',
                     style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF27AE60),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                      color: _textDark,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
-              Text(
-                'After submitting your application:\n'
-                '1. Our team will review your details\n'
-                '2. You will receive a confirmation email\n'
-                '3. A dedicated account manager will contact you\n'
-                '4. We will schedule an initial consultation',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade700,
-                  height: 1.5,
+              const SizedBox(height: 16),
+              ...[
+                (
+                  Icons.fact_check_outlined,
+                  'Our team reviews your application',
                 ),
-              ),
+                (
+                  Icons.mark_email_read_outlined,
+                  'Confirmation email sent to you',
+                ),
+                (
+                  Icons.support_agent_outlined,
+                  'Dedicated account manager assigned',
+                ),
+                (
+                  Icons.calendar_today_outlined,
+                  'Initial consultation scheduled',
+                ),
+                (Icons.account_tree, 'Service Matrix prepared for you'),
+              ].asMap().entries.map((e) {
+                final idx = e.key;
+                final item = e.value;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 26,
+                        height: 26,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [_purple, _blue],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${idx + 1}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Icon(item.$1, color: _purple, size: 18),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          item.$2,
+                          style: const TextStyle(
+                            fontSize: 13.5,
+                            color: _textMid,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
             ],
           ),
         ),
