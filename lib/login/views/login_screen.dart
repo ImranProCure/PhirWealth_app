@@ -197,26 +197,26 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
 
                     // Forgot password
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {},
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 4,
-                            vertical: 8,
-                          ),
-                        ),
-                        child: const Text(
-                          'Forgot Password?',
-                          style: TextStyle(
-                            color: _purple,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Align(
+                    //   alignment: Alignment.centerRight,
+                    //   child: TextButton(
+                    //     onPressed: () {},
+                    //     style: TextButton.styleFrom(
+                    //       padding: const EdgeInsets.symmetric(
+                    //         horizontal: 4,
+                    //         vertical: 8,
+                    //       ),
+                    //     ),
+                    //     child: const Text(
+                    //       'Forgot Password?',
+                    //       style: TextStyle(
+                    //         color: _purple,
+                    //         fontSize: 14,
+                    //         fontWeight: FontWeight.w600,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
 
                     const SizedBox(height: 8),
 
@@ -264,49 +264,49 @@ class _LoginScreenState extends State<LoginScreen>
 
                     const SizedBox(height: 32),
 
-                    // Divider
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 1,
-                            color: const Color(0xFFE5E7EB),
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Text(
-                            'or continue with',
-                            style: TextStyle(
-                              color: Color(0xFF9CA3AF),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            height: 1,
-                            color: const Color(0xFFE5E7EB),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // // Divider
+                    // Row(
+                    //   children: [
+                    //     Expanded(
+                    //       child: Container(
+                    //         height: 1,
+                    //         color: const Color(0xFFE5E7EB),
+                    //       ),
+                    //     ),
+                    //     const Padding(
+                    //       padding: EdgeInsets.symmetric(horizontal: 16),
+                    //       child: Text(
+                    //         'or continue with',
+                    //         style: TextStyle(
+                    //           color: Color(0xFF9CA3AF),
+                    //           fontSize: 13,
+                    //           fontWeight: FontWeight.w500,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     Expanded(
+                    //       child: Container(
+                    //         height: 1,
+                    //         color: const Color(0xFFE5E7EB),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
 
-                    const SizedBox(height: 20),
+                    //const SizedBox(height: 20),
 
                     // Social login buttons
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Image.asset("assets/images/Group 195.png"),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Image.asset("assets/images/Group 196.png"),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   children: [
+                    //     Expanded(
+                    //       child: Image.asset("assets/images/Group 195.png"),
+                    //     ),
+                    //     const SizedBox(width: 14),
+                    //     Expanded(
+                    //       child: Image.asset("assets/images/Group 196.png"),
+                    //     ),
+                    //   ],
+                    // ),
 
                     const SizedBox(height: 32),
 

@@ -903,28 +903,29 @@ class _MainNavigationScreenState extends State<MainNavigationScreen>
     return SafeArea(
       top: false,
       child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false, // 👈 hides back button
+        // appBar: AppBar(
+        //   automaticallyImplyLeading: false, // 👈 hides back button
+        //   title: const Text("PHIR Wealth"),
+        //   actions: [
+        //     IconButton(
+        //       icon: const Icon(Icons.logout),
+        //       tooltip: "Logout",
+        //       onPressed: () {
+        //         Navigator.pop(context);
+        //       },
+        //     ),
+        //   ],
+        // ),
+       // No extendBody — keeps screen content perfectly above nav bar
+        // body: Center(
+        //   child: Text(
+        //     "Thank you! Our PHIR Wealth team will connect with you soon",
+        //     textAlign: TextAlign.center,
+        //   ),
+        // ),
+        body: _screens[_currentIndex],
 
-          title: const Text("PHIR Wealth"),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.logout),
-              tooltip: "Logout",
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-        // No extendBody — keeps screen content perfectly above nav bar
-        body: Center(
-          child: Text(
-            "Thank you! Our PHIR Wealth team will connect with you soon",
-            textAlign: TextAlign.center,
-          ),
-        ),
-        // bottomNavigationBar: _buildNavBar(),
+        bottomNavigationBar: _buildNavBar(),
       ),
     );
   }
